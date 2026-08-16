@@ -1,0 +1,35 @@
+{
+  "revision": "demo-commit-7f3a2c1",
+  "source": "local-demo",
+  "policy_name": "default",
+  "changed_files": [
+    {"path": "src/proofsmith/policy.py", "additions": 18, "deletions": 4},
+    {"path": ".github/workflows/ci.yml", "additions": 6, "deletions": 1}
+  ],
+  "checks": [
+    {
+      "check_id": "unit",
+      "title": "Unit tests",
+      "status": "pass",
+      "summary": "42 tests passed",
+      "duration_ms": 842,
+      "evidence": ["pytest:42 passed"]
+    },
+    {
+      "check_id": "secret-scan",
+      "title": "Secret scan",
+      "status": "pass",
+      "summary": "No high-confidence secrets detected",
+      "duration_ms": 119,
+      "evidence": ["scanner:clean"]
+    },
+    {
+      "check_id": "workflow-lint",
+      "title": "Workflow lint",
+      "status": "pass",
+      "summary": "CI workflow is structurally valid",
+      "duration_ms": 87,
+      "evidence": ["workflow:ci.yml"]
+    }
+  ]
+}

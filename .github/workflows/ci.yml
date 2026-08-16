@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    name: Python quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install test tooling
+        run: python -m pip install --upgrade pip pytest pytest-cov ruff mypy
+      - name: Test with coverage
+        run: PYTHONPATH=src pytest --cov=proofsmith --cov-report=term-missing --cov-fail-under=90
+      - name: Lint
+        run: ruff check src tests
+      - name: Type check
+        run: mypy src
+
+  frontend:
+    name: Frontend build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm build
+
+  security:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan tracked text files for common secret shapes
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git grep -nE '(sk_live_|ghp_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|password[[:space:]]*[:=][[:space:]]*[^" ]+)' -- ':!pnpm-lock.yaml'; then
+            echo 'Potential secret-shaped value found.' >&2
+            exit 1
+          fi
