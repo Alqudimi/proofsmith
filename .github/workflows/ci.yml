@@ -49,7 +49,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if git grep -nE '(sk_live_|ghp_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|password[[:space:]]*[:=][[:space:]]*[^" ]+)' -- ':!pnpm-lock.yaml'; then
+          if git grep -nE '(sk_live_|ghp_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|password[[:space:]]*[:=][[:space:]]*[^" ]+)' -- ':!pnpm-lock.yaml' ':!.github/workflows/ci.yml'; then
             echo 'Potential secret-shaped value found.' >&2
             exit 1
           fi
