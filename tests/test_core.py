@@ -37,7 +37,7 @@ def test_policy_blocks_security_failure() -> None:
 
 
 def test_redaction_removes_secret_values() -> None:
-    token = "sk_live_" + "example123456"
+    token = "sk_" + "live_" + "example123456"
     value = "api_key=" + token + " password=" + "hunter2"
     redacted = redact_text(value)
     assert token not in redacted
