@@ -2,6 +2,14 @@
 
 All notable changes to ProofSmith are documented here.
 
+## [Unreleased]
+
+### Added
+
+- Safe `git diff --numstat` adapter and `proofsmith scan` command.
+- Parser tests for binary files, malformed input, traversal attempts, and CLI integration.
+- Repeatable impact-planning benchmark with a documented local baseline.
+
 ## [0.1.0-alpha] - 2026-08-16
 
 ### Added
