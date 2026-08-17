@@ -99,6 +99,10 @@ pnpm build
 
 The Python core intentionally starts with the standard library. New dependencies should earn their place through a concrete capability, security review, and test coverage. See [`CONTRIBUTING.md`](CONTRIBUTING.md) before opening a pull request.
 
+## Performance
+
+The repository includes `benchmarks/bench_impact.py` for a repeatable local measurement. On the sandbox used for this revision, planning a 1,000-file parsed diff for 1,000 iterations took 157.869 seconds total, or 157.869 ms per plan. This is a baseline for the current pure-Python planner, not a universal production SLA; future optimization should preserve deterministic output and be re-measured on representative repositories.
+
 ## Security model
 
 ProofSmith defaults to local execution, does not require credentials, and treats evidence as untrusted input until it is redacted and hashed. It does not execute arbitrary commands in the current MVP; check execution is represented by structured results so integrations can add bounded runners later. Read [`SECURITY.md`](SECURITY.md) for reporting guidance and threat boundaries.
