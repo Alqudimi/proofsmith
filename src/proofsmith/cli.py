@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from .bundle import create_bundle, read_bundle, write_bundle
+from .git_adapter import parse_numstat
 from .hashchain import verify_chain
 from .impact import plan_for
 from .models import ChangedFile, CheckResult, CheckStatus, VerificationRequest
@@ -29,10 +30,34 @@ def _files_from_payload(payload: dict[str, object]) -> tuple[ChangedFile, ...]:
     )
 
 
-def cmd_plan(args: argparse.Namespace) -> int:
-    payload = json.loads(Path(args.input).read_text())
+def _print_plan(payload: dict[str, object]) -> int:
     plan = plan_for(_files_from_payload(payload))
     print(json.dumps({"checks": plan.checks, "reasons": plan.reasons}, indent=2))
+    return 0
+
+
+def cmd_plan(args: argparse.Namespace) -> int:
+    payload = json.loads(Path(args.input).read_text())
+    return _print_plan(payload)
+
+
+def cmd_scan(args: argparse.Namespace) -> int:
+    text = args.input.read_text() if args.input else sys.stdin.read()
+    files = parse_numstat(text)
+    plan = plan_for(files)
+    print(
+        json.dumps(
+            {
+                "changed_files": [
+                    {"path": item.path, "additions": item.additions, "deletions": item.deletions}
+                    for item in files
+                ],
+                "checks": plan.checks,
+                "reasons": plan.reasons,
+            },
+            indent=2,
+        )
+    )
     return 0
 
 
@@ -75,9 +100,12 @@ def build_parser() -> argparse.ArgumentParser:
         prog="proofsmith", description="Turn code changes into replayable evidence."
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
-    plan = subparsers.add_parser("plan", help="derive deterministic checks from changed files")
+    plan = subparsers.add_parser("plan", help="derive deterministic checks from a JSON input")
     plan.add_argument("input", type=Path)
     plan.set_defaults(func=cmd_plan)
+    scan = subparsers.add_parser("scan", help="derive checks from Git diff --numstat output")
+    scan.add_argument("input", type=Path, nargs="?")
+    scan.set_defaults(func=cmd_scan)
     bundle = subparsers.add_parser(
         "bundle", help="create an evidence bundle from verification input"
     )

@@ -25,9 +25,13 @@ sequenceDiagram
 
 The current CLI intentionally accepts structured check results instead of spawning arbitrary commands. That keeps the MVP safe and deterministic. Future runners can implement a narrow adapter interface and return evidence records; they should not leak process output directly into a bundle without redaction and size limits.
 
+## Git input boundary
+
+The `git_adapter` module accepts only the textual output of `git diff --numstat`; it never invokes Git or a shell. It validates tab-separated fields, rejects absolute paths, parent traversal, NUL bytes, negative counts, and malformed line counts. Binary files are represented with zero line churn because Git does not provide meaningful line additions for them. This keeps the adapter deterministic and makes it safe to place before the impact planner in local hooks or CI.
+
 ## Extension boundaries
 
-A Git adapter will translate a provider diff into `ChangedFile` instances. A check plugin registry will map check IDs to providers. A sandbox runner can execute bounded commands with explicit allowlists and timeouts. An attestation adapter can sign the canonical unsigned bundle. None of these concerns belongs in the policy or model modules.
+A future plugin registry can map check IDs to providers. A sandbox runner can execute bounded commands with explicit allowlists and timeouts. An attestation adapter can sign the canonical unsigned bundle. None of these concerns belongs in the policy or model modules.
 
 ## Error flow
 

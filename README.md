@@ -18,6 +18,7 @@ ProofSmith makes that contract explicit. It is not an LLM observability dashboar
 
 | Capability | Current behavior |
 |---|---|
+| Git integration | Parses `git diff --numstat` safely, including binary files and path traversal rejection. |
 | Impact planning | Maps Python, frontend, workflow, documentation, and security paths to deterministic checks. |
 | Policy gates | Produces `pass`, `review`, `blocked`, or `skipped` with an actionable reason. |
 | Evidence bundles | Writes schema-versioned JSON containing revision, files, checks, policy result, and hashes. |
@@ -34,6 +35,8 @@ source .venv/bin/activate
 python -m pip install -e '.[test]'
 
 proofsmith plan examples/verification-input.json
+# Feed a real Git diff into the impact planner.
+git diff --numstat HEAD~1..HEAD | proofsmith scan
 proofsmith bundle examples/verification-input.json --output .proofsmith
 proofsmith verify .proofsmith/*.json
 ```
@@ -71,6 +74,7 @@ The design keeps business rules independent from the web presentation and leaves
 ```text
 src/proofsmith/
   models.py       # domain entities and statuses
+  git_adapter.py  # safe Git numstat parser
   impact.py       # deterministic change-to-check planning
   policy.py       # explicit decision gates
   redaction.py    # evidence sanitization
