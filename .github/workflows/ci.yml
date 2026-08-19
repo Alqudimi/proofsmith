@@ -17,14 +17,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install test tooling
-        run: python -m pip install --upgrade pip pytest pytest-cov ruff mypy
+      - name: Install package and quality tooling
+        run: python -m pip install --upgrade pip && python -m pip install -e '.[test]' ruff mypy
       - name: Test with coverage
         run: PYTHONPATH=src pytest --cov=proofsmith --cov-report=term-missing --cov-fail-under=90
       - name: Lint
         run: ruff check src tests
       - name: Type check
         run: mypy src
+      - name: Plan checks from the change surface
+        run: git diff --numstat HEAD^ HEAD | proofsmith scan
 
   frontend:
     name: Frontend build

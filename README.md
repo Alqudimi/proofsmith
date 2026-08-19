@@ -101,7 +101,7 @@ The Python core intentionally starts with the standard library. New dependencies
 
 ## Performance
 
-The repository includes `benchmarks/bench_impact.py` for a repeatable local measurement. On the sandbox used for this revision, planning a 1,000-file parsed diff for 1,000 iterations took 157.869 seconds total, or 157.869 ms per plan. This is a baseline for the current pure-Python planner, not a universal production SLA; future optimization should preserve deterministic output and be re-measured on representative repositories.
+The repository includes `benchmarks/bench_impact.py` for a repeatable local measurement. On the sandbox used for this revision, planning a 1,000-file parsed diff for 1,000 iterations took 157.869 seconds total, or 157.869 ms per plan. This is a baseline for the current pure-Python planner, not a universal production SLA; future optimization should preserve deterministic output and be re-measured on representative repositories. The hosted CI also runs `proofsmith scan` against the current commit diff, so the impact planner is exercised as part of the quality gate rather than only in unit tests.
 
 ## Security model
 
