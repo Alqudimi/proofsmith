@@ -21,7 +21,21 @@ _RULES: tuple[tuple[str, tuple[str, ...], tuple[str, ...]], ...] = (
     ("docs", ("*.md", "docs/*.md"), ("docs-links",)),
     (
         "security",
-        ("SECURITY.md", "*.lock", "pyproject.toml", "package.json"),
+        (
+            "SECURITY.md",
+            "*.lock",
+            "pyproject.toml",
+            "package.json",
+            "package-lock.json",
+            "pnpm-lock.yaml",
+            "yarn.lock",
+            "poetry.lock",
+            "Gemfile.lock",
+            "composer.lock",
+            "Cargo.lock",
+            "go.sum",
+            "uv.lock",
+        ),
         ("secret-scan", "dependency-audit"),
     ),
 )
