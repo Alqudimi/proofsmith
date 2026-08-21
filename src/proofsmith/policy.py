@@ -29,6 +29,8 @@ class Policy:
                 CheckStatus.REVIEW,
                 f"change churn is {churn}; review threshold is {self.max_churn}",
             )
+        if not checks:
+            return CheckStatus.SKIPPED, "no checks were provided; nothing to evaluate"
         security_failures = [
             check
             for check in checks
@@ -41,6 +43,9 @@ class Policy:
             return CheckStatus.BLOCKED, "one or more required checks failed"
         if any(check.status is CheckStatus.REVIEW for check in checks):
             return CheckStatus.REVIEW, "one or more checks require human review"
-        if self.require_evidence_for_pass and any(not check.evidence for check in checks):
+        actionable = [check for check in checks if check.status is not CheckStatus.SKIPPED]
+        if not actionable:
+            return CheckStatus.SKIPPED, "all checks were skipped; no evaluation was possible"
+        if self.require_evidence_for_pass and any(not check.evidence for check in actionable):
             return CheckStatus.REVIEW, "passing checks must include evidence"
         return CheckStatus.PASS, "all policy gates passed"
