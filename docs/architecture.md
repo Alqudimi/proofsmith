@@ -16,7 +16,7 @@ sequenceDiagram
   Planner-->>CLI: deterministic check plan + reasons
   CLI->>Checks: structured check results
   Checks->>Policy: results + change surface
-  Policy-->>Bundle: pass/review/blocked decision
+  Policy-->>Bundle: pass/review/blocked/skipped decision
   Bundle->>Bundle: redact and canonicalize
   Bundle->>Bundle: compute SHA-256 content hash
   CLI->>Verifier: bundle path(s)
